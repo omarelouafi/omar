@@ -1,0 +1,109 @@
+--------------------------------------
+BINOME: OMAR ELOUAFI, JAMAL AIT NOUHE.
+--------------------------------------
+----------------------------------
+C. Compréhension des blocs PL/SQL:
+----------------------------------
+
+C7)
+---
+
+DECLARE 
+CURSOR C_pilote IS 
+SELECT nom, sal, comm 
+FROM   pilote 
+WHERE  nopilot BETWEEN 1280 AND 1999 FOR UPDATE;
+  	v_nom	 pilote.nom%type;
+  	v_sal    pilote.sal%type;
+  	v_comm   pilote.comm%type;
+BEGIN
+open C_pilote;
+    loop
+        fetch C_pilote into v_nom,v_sal,v_comm;
+        exit when C_pilote%notfound;
+        if    v_comm>v_sal then
+                update pilote set sal =v_sal+v_comm where current of C_pilote;
+                update pilote set comm=0 where current of C_pilote;
+        elsif v_comm IS null then
+                delete from pilote where current of C_pilote;
+        end if;
+    end loop;
+    close C_pilote;
+END;
+
+-------------------------------------------------------------------------------------------------------
+
+C8)
+---
+
+DECLARE 
+  	v_sal        pilote.sal%type;
+  	v_comm       pilote.comm%type;
+  	v_nopilote   pilote.nopilote%type;
+        piloteInconnu  EXCEPTION; 
+        nomPiloteOk    EXCEPTION;
+        nomPiloteOkCS  EXCEPTION; 
+PROCEDURE squareNum(v_nopilote IN OUT pilote.nopilote%type) IS 
+BEGIN
+IF v_nopilote IS not null THEN RAISE nomPiloteOk; 
+ELSE  THEN RAISE piloteInconnu; 
+END IF;
+IF v_sal < v_comm THEN RAISE nomPiloteOkCS; 
+END IF;
+
+EXCEPTION 
+WHEN nomPiloteOk    THEN dbms_output.put_line('NOM PILOTE-OK'); 
+WHEN piloteInconnu  THEN dbms_output.put_line('PILOTE INCONNU'); 
+WHEN nomPiloteOkCS  THEN dbms_output.put_line('NOM PILOTE, COMM >SAL'); 
+END; 
+
+-------------------------------------------------------------------------------------------------------
+
+---------------------
+D. Création des vues:
+---------------------
+
+D1)
+---
+
+create view v_pilote as
+    select * from pilote where ville= 'paris';
+
+-------------------------------------------------------------------------------------------------------
+
+D2)
+---
+
+pas possible de modifier les salaires des pilotes habitant Paris à travers la vue v-pilote.
+
+-------------------------------------------------------------------------------------------------------
+
+D3)
+---
+
+create view dervol as
+    select date_vol from affectation where sysdate-date_vol= min(sysdate-date_vol);
+
+-------------------------------------------------------------------------------------------------------
+
+D4)
+---
+
+create view cr_pilote as
+    select * from pilote where ( ville= 'paris'
+    and comm is not null) or (ville <> 'paris' and comm is null)
+    with check option; -- pour checker si on update seulement avec ville=paris check clause where sinon pas de controle
+
+-------------------------------------------------------------------------------------------------------
+
+D5)
+---
+
+create view b_pilote  as
+    select * from pilote
+    where (nopilot in (select pilote from affectation ) and comm is not null)
+    or (nopilot not in (select pilote from affectation) and comm is null)
+    with check option;
+
+-------------------------------------------------------------------------------------------------------
+
