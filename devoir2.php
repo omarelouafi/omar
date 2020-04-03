@@ -1,10 +1,10 @@
-BINOME: OMAR ELOUAFI, JAMAL AIT NOUHE
+OMAR ELOUAFI
 
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <title>OMAR ELOUAFI, JAMAL AIT NOUHE</title>
+    <title>OMAR ELOUAFI</title>
     <style> div.container { display:inline-block; }</style>
   </head>
   <body>
