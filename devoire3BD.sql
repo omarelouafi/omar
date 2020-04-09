@@ -57,4 +57,8 @@ end;
 
 
 
+hello,
+I didn't understand the other two exercises 
+I hope you give us the solutions to these TPs
+cordially
 
